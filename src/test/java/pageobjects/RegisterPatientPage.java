@@ -16,8 +16,8 @@ public class RegisterPatientPage extends Base {
 
 	// RegisterPatientPage Test Data
 
-	public static String nameInput = "Yoki";
-	public static String familNameInput = "Ben";
+	public static String nameInput = "Benni";
+	public static String familNameInput = "Richard";
 	public static String genderInput = "Male";
 	public static String birthDateInput = "5";
 	public static String monthInput = "November";
