@@ -10,40 +10,49 @@ import pageobjects.RegisterPatientPage;
 
 public class TestCaseRunner extends Base {
 
-	@Test(description = "")
-	public void test01() {
+	@Test(description = "To Test the complete flow of registering a patient, "
+			+ "verifying details, managing visits, uploading attachments, and deleting the patient.")
+	public void testPatientWorkflow() {
 
-		new LoginPage().enterUsername(LoginPage.usernameInput).enterPassword(LoginPage.passwordInput)
-				.selectLocation(LoginPage.locationToSelect).clickLogin();
+		LoginPage.getInstance()
+				.enterUsername(LoginPage.usernameInput)
+				.enterPassword(LoginPage.passwordInput)
+				.selectLocation(LoginPage.locationToSelect)
+				.clickLogin();
 
-		new DashboardPage().verfiyDashboard(DashboardPage.title).clickRegisterPatientMenu();
+		DashboardPage.getInstance()
+				.verifyDashboardTitle(DashboardPage.title)
+				.navigateToRegisterPatientPage();
 
-		new RegisterPatientPage()
+		RegisterPatientPage.getInstance()
 				.enterPatientName(RegisterPatientPage.nameInput, RegisterPatientPage.familNameInput)
-				.clickNextButton().selectGender(RegisterPatientPage.genderInput).clickNextButton()
+				.clickNextButton()
+				.selectGender(RegisterPatientPage.genderInput)
+				.clickNextButton()
 				.selectBirthDate(RegisterPatientPage.birthDateInput, RegisterPatientPage.monthInput,
 						RegisterPatientPage.birthYearInput)
 				.clickNextButton()
 				.enterAddressDetails(RegisterPatientPage.address1Input, RegisterPatientPage.address2Input,
 						RegisterPatientPage.cityInput, RegisterPatientPage.stateInput, RegisterPatientPage.countryInput,
 						RegisterPatientPage.postalcodeInput)
-				.clickNextButton().
-				phoneNumber(RegisterPatientPage.phoneNumberInput).
-				clickNextButton().
-				clickNextButton()
-				.detailsVerification(RegisterPatientPage.nameInput, RegisterPatientPage.familNameInput,
+				.clickNextButton()
+				.enterPhoneNumber(RegisterPatientPage.phoneNumberInput)
+				.clickNextButton(2)
+				.verifyPatientDetails(RegisterPatientPage.nameInput, RegisterPatientPage.familNameInput,
 						RegisterPatientPage.genderInput, RegisterPatientPage.birthDateInput,
 						RegisterPatientPage.address1Input, RegisterPatientPage.address2Input,
 						RegisterPatientPage.cityInput, RegisterPatientPage.stateInput, RegisterPatientPage.countryInput,
 						RegisterPatientPage.postalcodeInput, RegisterPatientPage.phoneNumberInput)
-				.clickConfirmButton(RegisterPatientPage.patientDetailPageTitle);
-		
-		new PatientDetailsPage().
-		startAndConfirmVist().
-		uploadFile(PatientDetailsPage.testDataFilePath, PatientDetailsPage.captionInput)
-		.verfiyToaster(PatientDetailsPage.uploadSuccesToaster)
-		.clickPatientProfile().atttachmentPresence().recentVistEntrie().
-		deletePatient(PatientDetailsPage.patientDeleteReason, PatientDetailsPage.deletedPatientToaster).
-		findPatientRecord(PatientDetailsPage.patientID, PatientDetailsPage.patientRecordResult);
+				.confirmPatientRegistration(RegisterPatientPage.patientDetailPageTitle);
+
+		PatientDetailsPage.getInstance()
+				.startAndConfirmVisit()
+				.uploadFile(PatientDetailsPage.testDataFilePath, PatientDetailsPage.captionInput)
+				.verifyToasterMessage(PatientDetailsPage.uploadSuccesToaster)
+				.navigateToPatientProfile()
+				.verifyAttachmentPresence()
+				.verifyRecentVisitEntry()
+				.deletePatientAndVerify(PatientDetailsPage.patientDeleteReason, PatientDetailsPage.deletedPatientToaster)
+				.searchAndVerifyDeletedPatient(PatientDetailsPage.patientID, PatientDetailsPage.patientRecordResult);
 	}
 }

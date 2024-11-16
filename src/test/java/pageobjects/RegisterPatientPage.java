@@ -10,8 +10,21 @@ import base.Base;
 import utility.Utility;
 
 public class RegisterPatientPage extends Base {
-	public RegisterPatientPage() {
+	private static RegisterPatientPage instance;
+
+	private RegisterPatientPage() {
 		PageFactory.initElements(driver, this);
+	}
+
+	public static RegisterPatientPage getInstance() {
+		if (instance == null) {
+			synchronized (RegisterPatientPage.class) {
+				if (instance == null) {
+					instance = new RegisterPatientPage();
+				}
+			}
+		}
+		return instance;
 	}
 
 	// RegisterPatientPage Test Data
@@ -30,7 +43,7 @@ public class RegisterPatientPage extends Base {
 	public static String postalcodeInput = "282003";
 	public static String phoneNumberInput = "8976543211";
 	public static String patientDetailPageTitle = "OpenMRS Electronic Medical Record";
-	
+
 	// RegisterPatientPage Objects
 
 	@FindBy(name = "givenName")
@@ -92,12 +105,19 @@ public class RegisterPatientPage extends Base {
 
 	@FindBy(id = "submit")
 	public WebElement confirmButton_we;
-	
-	
+
 	// RegisterPatientPage Actions
-	
+
 	public RegisterPatientPage clickNextButton() {
 		Utility.click(nextButton_we);
+		return this;
+	}
+
+					// Multiple clicks
+	public RegisterPatientPage clickNextButton(int i) {
+		for (int k = 1; k <= i; k++) {
+			clickNextButton();
+		}
 		return this;
 	}
 
@@ -138,14 +158,15 @@ public class RegisterPatientPage extends Base {
 		return this;
 	}
 
-	public RegisterPatientPage phoneNumber(String phonenumberValue) {
+	public RegisterPatientPage enterPhoneNumber(String phonenumberValue) {
 		Utility.sendKeys(phoneNumber_we, phonenumberValue, "Entered phonenumber as: " + phonenumberValue);
 		return this;
 	}
 
-	public RegisterPatientPage detailsVerification(String expectedName, String expectedFamilyName, String expectedGender,
-			String expectedBirthDate, String expectedAddress1, String expectedAddress2, String expectedCity,
-			String expectedState, String expectedCountry, String expectedPostalCode, String expectedPhoneNumber) {
+	public RegisterPatientPage verifyPatientDetails(String expectedName, String expectedFamilyName,
+			String expectedGender, String expectedBirthDate, String expectedAddress1, String expectedAddress2,
+			String expectedCity, String expectedState, String expectedCountry, String expectedPostalCode,
+			String expectedPhoneNumber) {
 		Utility.logWithScreenshot("Verified Patient name...");
 		Utility.verifyContainsMultipleText(Utility.getText(patientName_we), expectedName, expectedFamilyName);
 		Utility.verifyContainsText(Utility.getText(patientGender_we), expectedGender, "Verified patient gender...");
@@ -159,7 +180,7 @@ public class RegisterPatientPage extends Base {
 		return this;
 	}
 
-	public RegisterPatientPage clickConfirmButton(String expectedTitle) {
+	public RegisterPatientPage confirmPatientRegistration(String expectedTitle) {
 		Utility.click(confirmButton_we);
 		Utility.verifyContainsText(Utility.getTitle(), expectedTitle, "Redirected to Patient details page ...");
 		return this;

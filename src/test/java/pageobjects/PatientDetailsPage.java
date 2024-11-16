@@ -12,9 +12,22 @@ import utility.Utility;
 
 public class PatientDetailsPage extends Base {
 
-	public PatientDetailsPage() {
-		PageFactory.initElements(driver, this);
-	}
+	private static PatientDetailsPage instance;
+
+    private PatientDetailsPage() {
+        PageFactory.initElements(driver, this);
+    }
+
+    public static PatientDetailsPage getInstance() {
+        if (instance == null) {
+            synchronized (PatientDetailsPage.class) {
+                if (instance == null) {
+                    instance = new PatientDetailsPage();
+                }
+            }
+        }
+        return instance;
+    }
 
 	// PatientDetailsPage test data
 
@@ -68,9 +81,8 @@ public class PatientDetailsPage extends Base {
 	@FindBy(id = "patient-search")
 	public WebElement patientSearch_we;
 
-	@FindBy(xpath = "//tr[@class='odd']//td")
+	@FindBy(xpath = "	//td[text()='No matching records found']\r\n")
 	public WebElement noRecord_we;
-
 	@FindBy(css = ".att_thumbnails-container")
 	public WebElement attachedImg_we;
 
@@ -82,7 +94,7 @@ public class PatientDetailsPage extends Base {
 
 	// PatientDetailsPage Actions
 
-	public PatientDetailsPage startAndConfirmVist() {
+	public PatientDetailsPage startAndConfirmVisit() {
 		Utility.click(startVist_we, "Clicked on Start Visit");
 		Utility.click(startVistCfmbtn_we, "Clicked on Confirm the visit");
 		return this;
@@ -96,31 +108,31 @@ public class PatientDetailsPage extends Base {
 		return this;
 	}
 
-	public PatientDetailsPage verfiyToaster(String expectedToaster) {
+	public PatientDetailsPage verifyToasterMessage(String expectedToaster) {
 		Utility.explicitWait(toasterMessage_we);
 		Utility.verifyContainsText(Utility.getText(toasterMessage_we), expectedToaster, "Verified toaster message...");
 		return this;
 	}
 
-	public PatientDetailsPage clickPatientProfile() {
+	public PatientDetailsPage navigateToPatientProfile() {
 		Utility.click(patientProfile_we);
 		return this;
 	}
 
-	public PatientDetailsPage atttachmentPresence() {
+	public PatientDetailsPage verifyAttachmentPresence() {
 		Assert.assertEquals(attachedImg_we.isDisplayed(), true);
 		Utility.logWithScreenshot("Verified attachement is attached ");
 		return this;
 	}
 
-	public PatientDetailsPage recentVistEntrie() {
+	public PatientDetailsPage verifyRecentVisitEntry() {
 		Utility.verifyCurrentDate(date_we, Utility.dateFormat1);
 		Utility.verifyContainsText(Utility.getText(attachementTag_we), "Attachment Upload",
 				"Verified current date and  Attachment Upload tag");
 		return this;
 	}
 
-	public PatientDetailsPage deletePatient(String reason, String expectedToaster) {
+	public PatientDetailsPage deletePatientAndVerify(String reason, String expectedToaster) {
 		patientID = Utility.getText(patientID_we);
 		Utility.click(deleteButton_we);
 		Utility.sendKeys(deleteReason_we, "Enter reason as " + reason);
@@ -130,11 +142,10 @@ public class PatientDetailsPage extends Base {
 		return this;
 	}
 
-	public PatientDetailsPage findPatientRecord(String patienId, String expectedRecord) {
+	public PatientDetailsPage searchAndVerifyDeletedPatient(String patienId, String expectedRecord) {
 
 		Utility.sendKeys(patientSearch_we, patienId, "Search patiend id as: " + patienId);
-		Utility.delay(1000);
-		System.out.println(Utility.getText(noRecord_we));
+		Utility.explicitWait(noRecord_we);
 		Utility.verifyContainsText(Utility.getText(noRecord_we), expectedRecord, "The deleted patient not listed");
 		return this;
 	}

@@ -8,10 +8,22 @@ import base.Base;
 import utility.Utility;
 
 public class DashboardPage extends Base {
-	public DashboardPage() {
-		PageFactory.initElements(driver, this);
-	}
+	private static DashboardPage instance;
 
+    private DashboardPage() {
+        PageFactory.initElements(driver, this);
+    }
+
+    public static DashboardPage getInstance() {
+        if (instance == null) {
+            synchronized (DashboardPage.class) { 
+                if (instance == null) {
+                    instance = new DashboardPage();
+                }
+            }
+        }
+        return instance;
+    }
 	// Dash board page test data
 	public static String title = "Home";
 
@@ -21,13 +33,13 @@ public class DashboardPage extends Base {
 
 	// Dash board page actions
 
-	public DashboardPage verfiyDashboard(String expected) {
+	public DashboardPage verifyDashboardTitle(String expected) {
 		String actual = driver.getTitle();
 		Utility.verifyContainsText(actual, expected, "Redirected to Dashboard page");
 		return this;
 	}
 
-	public DashboardPage clickRegisterPatientMenu() {
+	public DashboardPage navigateToRegisterPatientPage() {
 		Utility.click(registerAPatient_we, "Clicked on Register a patient menu");
 		return this;
 	}
