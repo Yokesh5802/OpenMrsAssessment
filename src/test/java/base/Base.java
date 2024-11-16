@@ -114,7 +114,7 @@ public class Base {
 	@AfterSuite
 	public void afterSuite() {
 
-		//driver.quit();
+		driver.quit();
 		extentReport.flush();
 
 	}
